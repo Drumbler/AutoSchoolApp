@@ -27,6 +27,11 @@ class DatabaseHelper {
     );
   }
 
+  static Future<List<Map<String, dynamic>>> getAllTeachers() async {
+    final db = await database;
+    return await db.query('teachers', columns: ['id', 'name']);
+  }
+
   static Future<String> getTeacherName(int teacherId) async {
     final db = await database;
     final result = await db.query(

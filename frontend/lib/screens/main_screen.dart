@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/booking.dart';
 import 'package:frontend/widgets/booking_list_widget.dart';
-import 'package:frontend/widgets/booking_widget.dart';
 import 'package:frontend/screens/booking_screen.dart';
 import 'package:frontend/widgets/calendar_widget.dart';
 
@@ -40,7 +39,10 @@ class _MainScreenState extends State<MainScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Text('Календарь записей', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Календарь записей',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             CalendarWidget(
               selectedDate: selectedDate,
               isDarkMode: Theme.of(context).brightness == Brightness.dark,
@@ -48,12 +50,32 @@ class _MainScreenState extends State<MainScreen> {
                 setState(() {
                   selectedDate = date;
                 });
-              },  
+              },
             ),
-            
+            const SizedBox(height: 20),
+            Text(
+              "Ваши записи",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Expanded(child: BookingListWidget(bookings: bookings)),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => BookingScreen(onBookingAdded: _addBooking),
+                  ),
+                );
+                if (result != null) {
+                  _addBooking(result.date, result.time, result.teacherId);
+                }
+              },
+              child: Text('Добавить запись'),
+            ),
           ],
         ),
-      )
+      ),
     );
   }
 }
