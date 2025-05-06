@@ -1,27 +1,64 @@
-from datetime import datetime
-import enum
-from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime, time
+from typing import List, Optional
+from sqlmodel import Field, Relationship, SQLModel
 
 
-class AppointmentStatus(enum.Enum):
-    AVAILABLE = 'available'
-    BOOKED = 'booked'
+class User(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(index=True, nullabl=False, unique=True)
+    password_hash: str = Field(nullable=False)
+    email: str = Field(index=True, nullable=False, unique=True)
+    created_at: datetime = Field(default_factory=time.time)
+
+    profile: "Profile" = Relationship(back_populates='user', uselist=False)
+    roles: List["Role"] = Relationship(
+        back_populates='users', link_model="UserRole")
 
 
-class Appointment(BaseModel):
-    id: int
-    teacher_id: int
-    student_id: Optional[int] = None
-    apointment_time: datetime
-    lesson_duration: int
-    created_at: datetime
-    status: AppointmentStatus
+class Role(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str = Field(unique=True, nullable=False)
+    users: List[User] = Relationship(
+        back_populates='roles', link_model="UserRole")
 
 
-class AppointmentCreate(BaseModel):
-    teacher_id: int
-    student_id: Optional[int] = None
-    apointment_time: datetime
-    lesson_duration: int
-    created_at: datetime
+class UserRole(SQLModel, table=True):
+    user_id: Optional[int] = Field(
+        default=None, foreign_key="user.id", primary_key=True)
+    role_id: Optional[int] = Field(
+        default=None, foreign_key="role.id", primary_key=True)
+
+
+class Profile(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", nullable=False)
+    profile_type: str
+    full_name: str
+    phone: Optional[str]
+    licence_category: Optional[str]
+    car_model: Optional[str]
+    department: Optional[str]
+
+    user: User = Relationship(back_populates="profile")
+
+    appointments_as_students: List["Appointment"] = Relationship(
+        back_populates="student", sa_relationship_kwargs={
+            "primaryjoin": "Appointment.student_profile_id==Profile.id"}
+    )
+    appointments_as_teacher: List["Appointment"] = Relationship(
+        back_populates="teacher", sa_relationship_kwargs={
+            "primaryjoin": "Appointment.teacher_profile_id==Profile.id"}
+    )
+
+
+class Appointment(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    student_profile_id: int = Field(foreign_key="profile.id", nullable=False)
+    teacher_profile_id: int = Field(foreign_key="profile.id", nullable=False)
+    starts_at: datetime
+    ends_at: Optional[datetime]
+    created_at: datetime = Field(default_factory=time.time)
+    student: Optional[Profile] = Relationship(
+        back_populates="appointments_as_student")
+    teacher: Optional[Profile] = Relationship(
+        back_populates="appointments_as_teacher")

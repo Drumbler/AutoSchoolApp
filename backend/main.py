@@ -1,21 +1,21 @@
-from typing import List
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
-
-from models import Appointment, AppointmentCreate, AppointmentStatus
-
-
-app = FastAPI()
-fake_db: List = []
+from backend import init_db, async_session
+from backend.routers import appointments, profiles, auth
 
 
-@app.post('/appointment/', response_model=Appointment)
-def create_appointment(appointment: AppointmentCreate):
-    new_appointment = Appointment(
-        id=len(fake_db) + 1,
-        **appointment.model_dump(),
-        status=AppointmentStatus.AVAILABLE)
-    fake_db.append(new_appointment)
-    return new_appointment
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Initialize the database on startup.
+    """
+    await init_db()
+    yield
 
 
+app = FastAPI(title="AutoSchool API")
 
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(profiles.router, prefix="/profiles", tags=["profiles"])
+app.include_router(appointments.router,
+                   prefix="/appointments", tags=["appointments"])
