@@ -4,14 +4,14 @@ import 'package:frontend/models/booking.dart';
 
 class BookingsListScreen extends StatelessWidget {
   final List<Booking> bookings;
-  const BookingsListScreen({Key? key, required this.bookings}) : super(key: key);
+  const BookingsListScreen({super.key, required this.bookings});
 
   @override
   Widget build(BuildContext context) {
     // Сортируем записи по дате
     List<Booking> sortedBookings = List.from(bookings);
     sortedBookings.sort((a, b) => a.dateTime.compareTo(b.dateTime));
-    
+
     return Scaffold(
       appBar: AppBar(title: Text('Список записей')),
       body: ListView.builder(

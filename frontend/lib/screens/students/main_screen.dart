@@ -5,7 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:frontend/models/booking.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/booking.dart';
-import 'screens/main_screen.dart';
-import 'screens/new_booking_screen.dart';
-import 'screens/booking_list_screen.dart';
+import 'screens/students/main_screen.dart';
+import 'screens/students/new_booking_screen.dart';
+import 'screens/students/booking_list_screen.dart';
 
 void main() {
   runApp(CalendarApp());
 }
 
 class CalendarApp extends StatelessWidget {
+  const CalendarApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

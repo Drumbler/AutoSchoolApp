@@ -32,7 +32,7 @@ class CommonCalendar extends StatefulWidget {
   final DaysOfWeekStyle? daysOfWeekStyle;
 
   const CommonCalendar({
-    Key? key,
+    super.key,
     required this.initialFocusedDay,
     required this.initialSelectedDay,
     required this.onDaySelected,
@@ -43,7 +43,7 @@ class CommonCalendar extends StatefulWidget {
     this.headerStyle,
     this.calendarStyle,
     this.daysOfWeekStyle,
-  }) : super(key: key);
+  });
 
   @override
   _CommonCalendarState createState() => _CommonCalendarState();

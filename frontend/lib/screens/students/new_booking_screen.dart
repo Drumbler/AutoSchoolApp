@@ -3,7 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:frontend/widgets/common_calendar.dart';
 
 class NewBookingScreen extends StatefulWidget {
-  const NewBookingScreen({Key? key}) : super(key: key);
+  const NewBookingScreen({super.key});
   @override
   _NewBookingScreenState createState() => _NewBookingScreenState();
 }

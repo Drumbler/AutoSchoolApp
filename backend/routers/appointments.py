@@ -6,7 +6,8 @@ from fastapi import APIRouter, Query, status
 from sqlmodel import select
 
 from backend.core.auth import get_current_user, get_session
-from backend.crud import create_appointment, list_appointments
+from backend.core.exceptions import AppointmentNotFoundException
+from backend.crud import create_appointment, get_appointment, list_appointments
 from backend.models import Appointment
 from backend.schemas import AppointmentCreate, AppointmentRead
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -61,3 +62,28 @@ async def get_appointments(
     if date_filter:
         start_dt = datetime.combine(date_filter, time.min)
         end_dt = datetime.combine(date_filter, time.max)
+        stmt = stmt.where(Appointment.starts_at >= start_dt).where(
+            Appointment.ends_at <= end_dt)
+    result = await session.exec(stmt.order_by(Appointment.starts_at))
+    return result.all()
+
+
+@router.get("/{appointment_id}", response_model=AppointmentRead)
+async def read_appointment(
+    appointment_id: int,
+    current_user=Depends(get_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    appoint = await get_appointment(session, appointment_id)
+    if not appoint:
+        raise AppointmentNotFoundException()
+    own = (
+        (current_user.profile.profile_type == 'student' and appoint.student_profile_id == current_user.profile.id) or
+        (current_user.profile.profile_type == 'teacher' and appoint.teacher_profile_id == current_user.profile.id)
+    )
+    if not own and current_user.prfile.profile_type not in ('manager', 'admin'):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return appoint
+
+
