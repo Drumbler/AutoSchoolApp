@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend/widgets/common_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:frontend/models/booking.dart';
+import 'package:frontend/models/appointment.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -15,56 +15,68 @@ class _MainScreenState extends State<MainScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
-  // Пример списка записей (Booking)
-  final List<Booking> bookings = [
-    Booking(
-      dateTime: DateTime.now().add(Duration(hours: 2)),
-      teacher: 'Mr. Smith',
+  // Пример списка записей (appointment)
+  final List<Appointment> appts = [
+    Appointment(
+      id: 1,
+      startsAt: DateTime.now().add(Duration(hours: 2)),
+      createdAt: DateTime.now(),
+      teacherName: 'Mr. Smith',
+      studentName: 'Me',
     ),
-    Booking(
-      dateTime: DateTime.now().add(Duration(hours: 6)),
-      teacher: 'Mrs. Johnson',
+    Appointment(
+      id: 2,
+      startsAt: DateTime.now().add(Duration(hours: 6)),
+      createdAt: DateTime.now(),
+      teacherName: 'Mrs. Johnson',
+      studentName: 'Me',
     ),
 
-    Booking(
-      dateTime: DateTime.now().add(Duration(days: 1, hours: 3)),
-      teacher: 'Mrs. Johnson',
+    Appointment(
+      id: 3,
+      startsAt: DateTime.now().add(Duration(days: 1, hours: 3)),
+      createdAt: DateTime.now(),
+      teacherName: 'Mrs. Johnson',
+      studentName: 'Me',
     ),
-    Booking(
-      dateTime: DateTime.now().add(Duration(days: 2, hours: 1)),
-      teacher: 'Ms. Davis',
+    Appointment(
+      id: 4,
+      startsAt: DateTime.now().add(Duration(days: 2, hours: 1)),
+      createdAt: DateTime.now(),
+      teacherName: 'Ms. Davis',
+      studentName: 'Me',
     ),
   ];
 
-  Booking? _getNearestBooking() {
+  Appointment? _getNearestAppointment() {
     final now = DateTime.now();
-    final upcoming = bookings.where((b) => b.dateTime.isAfter(now)).toList();
+    final upcoming = appts.where((b) => b.startsAt.isAfter(now)).toList();
     if (upcoming.isEmpty) return null;
-    upcoming.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    upcoming.sort((a, b) => a.startsAt.compareTo(b.startsAt));
     return upcoming.first;
   }
 
-  List<Booking> _getBookingsForDate(DateTime date) {
-    return bookings
+  List<Appointment> _getAppointmentsForDate(DateTime date) {
+    return appts
         .where(
           (b) =>
-              b.dateTime.year == date.year &&
-              b.dateTime.month == date.month &&
-              b.dateTime.day == date.day,
+              b.startsAt.year == date.year &&
+              b.startsAt.month == date.month &&
+              b.startsAt.day == date.day,
         )
         .toList();
   }
 
-  // Функция для eventLoader, которая возвращает событие, если день есть в bookingDates.
+  // Функция для eventLoader, которая возвращает событие, если день есть в appointmentDates.
   List<dynamic> _getEventsForDay(DateTime day) {
     final key = DateTime(day.year, day.month, day.day);
-    bool hasBooking = bookings.any(
-      (booking) =>
-          booking.dateTime.year == key.year &&
-          booking.dateTime.month == key.month &&
-          booking.dateTime.day == key.day,
+    bool hasAppointment = appts.any(
+      (appointment) =>
+          appointment.startsAt.year == key.year &&
+          appointment.startsAt.month == key.month &&
+          appointment.startsAt.day == key.day,
     );
-    return hasBooking ? ['booking'] : [];
+    return hasAppointment ? ['appointment'] : [];
   }
 
   @override
@@ -172,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
             // Плитка для создания новой записи
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, '/newBooking');
+                Navigator.pushNamed(context, '/newAppointment');
               },
               child: Container(
                 height: tileHeight,
@@ -200,8 +212,8 @@ class _MainScreenState extends State<MainScreen> {
               onTap: () {
                 Navigator.pushNamed(
                   context,
-                  '/bookingsList',
-                  arguments: bookings,
+                  '/appointmentsList',
+                  arguments: appts,
                 );
               },
               child: Container(
@@ -223,7 +235,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ),
                     SizedBox(height: 8),
-                    _buildNearestBookingPreview(),
+                    _buildNearestAppointmentPreview(),
                   ],
                 ),
               ),
@@ -248,7 +260,7 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ),
                     SizedBox(height: 8),
-                    _buildTargetBookingsPreview(_selectedDay),
+                    _buildTargetAppointmentsPreview(_selectedDay),
                   ],
                 ),
               ),
@@ -259,41 +271,41 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildNearestBookingPreview() {
-    Booking? nearest = _getNearestBooking();
+  Widget _buildNearestAppointmentPreview() {
+    Appointment? nearest = _getNearestAppointment();
     if (nearest == null) {
       return Text('Нет записей', style: TextStyle(fontSize: 12));
     }
     return Column(
       children: [
         Text(
-          DateFormat.yMd().add_jm().format(nearest.dateTime),
+          DateFormat.yMd().add_jm().format(nearest.startsAt),
           style: TextStyle(fontSize: 12),
         ),
         Text(
-          'Преподаватель: ${nearest.teacher}',
+          'Преподаватель: ${nearest.teacherName}',
           style: TextStyle(fontSize: 12),
         ),
       ],
     );
   }
 
-  Widget _buildTargetBookingsPreview(DateTime date) {
-    List<Booking> bookings = _getBookingsForDate(date);
-    if (bookings.isEmpty) {
+  Widget _buildTargetAppointmentsPreview(DateTime date) {
+    List<Appointment> appts = _getAppointmentsForDate(date);
+    if (appts.isEmpty) {
       return Text('Нет записей', style: TextStyle(fontSize: 14));
     }
     return Column(
       children:
-          bookings.map((booking) {
+          appts.map((appointment) {
             return Column(
               children: [
                 Text(
-                  DateFormat.yMd().add_jm().format(booking.dateTime),
+                  DateFormat.yMd().add_jm().format(appointment.startsAt),
                   style: TextStyle(fontSize: 14),
                 ),
                 Text(
-                  booking.teacher,
+                  appointment.teacherName,
                   style: TextStyle(
                     fontSize: 14,
                     decorationStyle: TextDecorationStyle.solid,

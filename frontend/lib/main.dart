@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/models/booking.dart';
+import 'package:frontend/models/appointment.dart';
 import 'screens/students/main_screen.dart';
 import 'screens/students/new_booking_screen.dart';
 import 'screens/students/booking_list_screen.dart';
@@ -21,13 +21,13 @@ class CalendarApp extends StatelessWidget {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (_) => MainScreen());
-          case '/newBooking':
+          case '/newAppointment':
             return MaterialPageRoute(builder: (_) => NewBookingScreen());
-          case '/bookingsList':
+          case '/appointmentsList':
             // Ожидаем, что аргументы будут списком бронирований (Booking)
-            final args = settings.arguments as List<Booking>? ?? [];
+            final args = settings.arguments as List<Appointment>? ?? [];
             return MaterialPageRoute(
-              builder: (_) => BookingsListScreen(bookings: args),
+              builder: (_) => ApptsListScreen(appointment: args),
             );
           default:
             return MaterialPageRoute(builder: (_) => MainScreen());

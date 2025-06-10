@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/calendar_logic.dart';
 import 'package:frontend/utils/database_helper.dart';
 
-class BookingScreen extends StatefulWidget {
-  final Function(DateTime, TimeOfDay, int) onBookingAdded;
+class AppointmentScreen extends StatefulWidget {
+  final Function(DateTime, TimeOfDay, int) onAppointmentAdded;
 
-  const BookingScreen({super.key, required this.onBookingAdded});
+  const AppointmentScreen({super.key, required this.onAppointmentAdded});
 
   @override
-  _BookingScreenState createState() => _BookingScreenState();
+  _ApptScreenState createState() => _ApptScreenState();
 }
 
-class _BookingScreenState extends State<BookingScreen> {
+class _ApptScreenState extends State<AppointmentScreen> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay(hour: 12, minute: 0);
   int? selectedTeacherId;
@@ -59,9 +59,9 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  void _confirmBooking() {
+  void _confirmAppointment() {
     if (selectedTeacherId != null) {
-      widget.onBookingAdded(selectedDate, selectedTime, selectedTeacherId!);
+      widget.onAppointmentAdded(selectedDate, selectedTime, selectedTeacherId!);
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(
@@ -121,7 +121,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             Center(
               child: ElevatedButton(
-                onPressed: _confirmBooking,
+                onPressed: _confirmAppointment,
                 child: Text("Подтвердить запись"),
               ),
             ),
