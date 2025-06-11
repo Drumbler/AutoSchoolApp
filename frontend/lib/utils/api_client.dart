@@ -90,6 +90,22 @@ class ApiClient {
     }
   }
 
+  static Future<List<Appointment>> fetchTeacherAppointments({DateTime? date}) async {
+    final uri =
+        date != null
+            ? Uri.parse(
+              '$_baseUrl/appointments/teacher?date_filter=${date.toIso8601String()}',
+            )
+            : Uri.parse('$_baseUrl/appointments/teacher');
+    final resp = await http.get(uri, headers: await _headers());
+    if (resp.statusCode == 200) {
+      final List list = jsonDecode(resp.body);
+      return list.map((e) => Appointment.fromJson(e)).toList();
+    } else {
+      throw Exception('Failed to load appointments');
+    }
+  }
+
   static Future<Appointment> createAppointment(Appointment appt) async {
     final uri = Uri.parse('$_baseUrl/appointments');
     final resp = await http.post(

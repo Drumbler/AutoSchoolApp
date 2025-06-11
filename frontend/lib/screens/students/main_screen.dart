@@ -68,7 +68,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   // Функция для eventLoader, которая возвращает событие, если день есть в appointmentDates.
-  List<dynamic> _getEventsForDay(DateTime day) {
+  List<dynamic> _eventsForDay(DateTime day) {
     final key = DateTime(day.year, day.month, day.day);
     bool hasAppointment = appts.any(
       (appointment) =>
@@ -127,7 +127,7 @@ class _MainScreenState extends State<MainScreen> {
                         headerVisible: false,
                         calendarFormat: CalendarFormat.week,
                         rowHeight: 40,
-                        eventLoader: _getEventsForDay,
+                        eventLoader: _eventsForDay,
                         // Можно задать свой стиль для компактного календаря:
                         calendarStyle: CalendarStyle(
                           defaultDecoration: BoxDecoration(
