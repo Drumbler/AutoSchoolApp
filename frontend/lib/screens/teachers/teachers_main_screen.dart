@@ -15,7 +15,7 @@ class TeachersMainScreen extends StatefulWidget {
 
 class _TeacherMainScreenState extends State<TeachersMainScreen> {
   DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
   List<Appointment> _appointments = [];
   Appointment? _nextAppointment;
 
@@ -54,7 +54,7 @@ class _TeacherMainScreenState extends State<TeachersMainScreen> {
 
   void _onDaySelected(DateTime selected, DateTime focused) {
     setState(() {
-      _selectedDate = selected;
+      _selectedDay = selected;
       _focusedDay = focused;
     });
   }
@@ -67,9 +67,9 @@ class _TeacherMainScreenState extends State<TeachersMainScreen> {
         _appointments
             .where(
               (a) =>
-                  a.startsAt.year == _selectedDate.year &&
-                  a.startsAt.month == _selectedDate.month &&
-                  a.startsAt.day == _selectedDate.day,
+                  a.startsAt.year == _selectedDay.year &&
+                  a.startsAt.month == _selectedDay.month &&
+                  a.startsAt.day == _selectedDay.day,
             )
             .toList();
 
@@ -83,11 +83,11 @@ class _TeacherMainScreenState extends State<TeachersMainScreen> {
               height: tileHeigh,
               child: CommonCalendar(
                 initialFocusedDay: _focusedDay,
-                initialSelectedDay: _selectedDate,
+                initialSelectedDay: _selectedDay,
                 onDaySelected: _onDaySelected,
                 headerVisible: false,
                 calendarFormat: CalendarFormat.week,
-                rowHeight: 24,
+                rowHeight: 40,
                 eventLoader: _eventsForDay,
                 calendarStyle: CalendarStyle(
                   todayDecoration: BoxDecoration(
@@ -119,6 +119,23 @@ class _TeacherMainScreenState extends State<TeachersMainScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            // записи на конкретный день
+            AppTile(
+              color: Colors.orangeAccent,
+              title: 'Мои записи',
+              subtitle:
+                  dateAppointments.isEmpty
+                      ? 'Нет записей'
+                      : '${dateAppointments.length} записей',
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/teacher/appointments',
+                  arguments: _selectedDay,
+                );
+              },
+              height: tileHeigh,
+            ),
             // Создание новой записи
             AppTile(
               color: Colors.greenAccent,
