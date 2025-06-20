@@ -13,7 +13,7 @@ from exceptions import CredentialException, UserNotFoundException
 
 SECRET_KEY = ""
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 10080
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 

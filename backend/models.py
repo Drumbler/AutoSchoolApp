@@ -5,7 +5,9 @@ from sqlmodel import Field, Relationship, SQLModel
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    username: str = Field(index=True, nullabl=False, unique=True)
+    username: str = Field(index=True, nullable=False, unique=True)
+    name: str = Field(nullable=False, unique=False)
+    surname: str = Field(nullable=False, unique=False)
     password_hash: str = Field(nullable=False)
     email: str = Field(index=True, nullable=False, unique=True)
     created_at: datetime = Field(default_factory=time.time)

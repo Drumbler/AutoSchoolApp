@@ -23,8 +23,3 @@ async def create_user_profile(
         raise UserAlreadyExistsException(detail="profile already exists")
     profile = await create_profile(session, current_user.id, profile_in)
     return profile
-
-
-@router.get("/", response_model=list[ProfileRead])
-async def list_user_profiles(session: AsyncSession = Depends(get_session)):
-    return await get_profiles(session)

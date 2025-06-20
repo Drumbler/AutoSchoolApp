@@ -38,6 +38,7 @@ class ApiClient {
         'password': password,
       }),
     );
+
     if (resp.statusCode != 201) {
       final err = jsonDecode(resp.body)['detail'] ?? 'Registration failed';
       throw Exception(err);
@@ -74,6 +75,8 @@ class ApiClient {
     }
   }
 
+  // APPOINTMENTS
+
   static Future<List<Appointment>> fetchAppointments({DateTime? date}) async {
     final uri =
         date != null
@@ -90,7 +93,9 @@ class ApiClient {
     }
   }
 
-  static Future<List<Appointment>> fetchTeacherAppointments({DateTime? date}) async {
+  static Future<List<Appointment>> fetchTeacherAppointments({
+    DateTime? date,
+  }) async {
     final uri =
         date != null
             ? Uri.parse(
